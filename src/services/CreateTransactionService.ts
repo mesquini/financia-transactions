@@ -14,9 +14,12 @@ class CreateTransactionService {
   }
 
   public execute({ title, value, type }: CreateTransactionDTO): Transaction {
-    const verifyTotal = this.transactionsRepository.verifyTotal(type, value);
+    if (!['income', 'outcome'].includes(type))
+      throw Error('Transaction type is invalid!');
 
-    if (verifyTotal)
+    const { total } = this.transactionsRepository.getBalance();
+
+    if (type.includes('out') && total < value)
       throw Error('Não foi possivel sacar o dinheiro, valor extrapolado!!!');
 
     const transaction = this.transactionsRepository.create({

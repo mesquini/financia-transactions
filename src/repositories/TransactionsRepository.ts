@@ -52,15 +52,6 @@ class TransactionsRepository {
 
     return transaction;
   }
-
-  public verifyTotal(type: string, value: number): boolean {
-    if (type.includes('out')) {
-      const { total } = this.getBalance();
-      return value > total;
-    }
-
-    return false;
-  }
 }
 
 export default TransactionsRepository;
