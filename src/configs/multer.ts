@@ -1,8 +1,6 @@
 import { Request } from 'express';
 import { FileFilterCallback } from 'multer';
 
-import AppError from '../errors/AppError';
-
 export default {
   dest: '/tmp',
 

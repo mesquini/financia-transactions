@@ -10,8 +10,6 @@ import CreateTransactionService from '../services/CreateTransactionService';
 import DeleteTransactionService from '../services/DeleteTransactionService';
 import ImportTransactionsService from '../services/ImportTransactionsService';
 
-import UploadValidation from '../validations/UploadValidation';
-
 const transactionRouter = Router();
 const upload = multer(multerConfig);
 
@@ -56,11 +54,10 @@ transactionRouter.delete('/:id', async (request, response) => {
 transactionRouter.post(
   '/import',
   upload.single('file'),
-  UploadValidation,
   async (request, response) => {
     const importTransactionsService = new ImportTransactionsService();
 
-    await importTransactionsService.execute(request.csv);
+    await importTransactionsService.execute(request.file.path);
 
     return response
       .status(201)
