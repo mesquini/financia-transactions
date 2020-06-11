@@ -1,3 +1,5 @@
+import { EntityRepository, Repository } from 'typeorm';
+
 import Transaction from '../models/Transaction';
 
 interface Balance {
@@ -11,46 +13,28 @@ interface CreateTransactionDTO {
   value: number;
   type: 'income' | 'outcome';
 }
+@EntityRepository(Transaction)
+class TransactionsRepository extends Repository<Transaction> {
+  public async getBalance(): Promise<Balance> {
+    const incomes = await this.find({ where: { type: 'income' } });
 
-class TransactionsRepository {
-  private transactions: Transaction[];
+    const incomesvalue = incomes.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.value,
+      0,
+    );
 
-  constructor() {
-    this.transactions = [];
-  }
+    const outcomes = await this.find({ where: { type: 'outcome' } });
 
-  public all(): Transaction[] {
-    return this.transactions;
-  }
-
-  public getBalance(): Balance {
-    const incomes = this.transactions
-      .filter(transaction => transaction.type.includes('income'))
-      .reduce(
-        (accumulator, currentValue) => accumulator + currentValue.value,
-        0,
-      );
-
-    const outcomes = this.transactions
-      .filter(transaction => transaction.type.includes('outcome'))
-      .reduce(
-        (accumulator, currentValue) => accumulator + currentValue.value,
-        0,
-      );
+    const outcomesValue = outcomes.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.value,
+      0,
+    );
 
     return {
-      income: incomes,
-      outcome: outcomes,
-      total: incomes - outcomes,
+      income: incomesvalue,
+      outcome: outcomesValue,
+      total: incomesvalue - outcomesValue,
     };
-  }
-
-  public create({ title, value, type }: CreateTransactionDTO): Transaction {
-    const transaction = new Transaction({ title, value, type });
-
-    this.transactions.push(transaction);
-
-    return transaction;
   }
 }
 

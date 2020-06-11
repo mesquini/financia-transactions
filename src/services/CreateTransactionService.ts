@@ -1,32 +1,54 @@
+import { getCustomRepository } from 'typeorm';
+
+import AppError from '../errors/AppError';
+
 import TransactionsRepository from '../repositories/TransactionsRepository';
+import CategoriesRepository from '../repositories/CategoriesRepository';
+
 import Transaction from '../models/Transaction';
 
 interface CreateTransactionDTO {
   title: string;
   value: number;
   type: 'income' | 'outcome';
+  categoryTitle: string;
 }
 class CreateTransactionService {
-  private transactionsRepository: TransactionsRepository;
-
-  constructor(transactionsRepository: TransactionsRepository) {
-    this.transactionsRepository = transactionsRepository;
-  }
-
-  public execute({ title, value, type }: CreateTransactionDTO): Transaction {
+  public async execute({
+    title,
+    value,
+    type,
+    categoryTitle,
+  }: CreateTransactionDTO): Promise<Transaction> {
     if (!['income', 'outcome'].includes(type))
-      throw Error('Transaction type is invalid!');
+      throw new AppError('Transaction type is invalid!');
 
-    const { total } = this.transactionsRepository.getBalance();
+    const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+    const { total } = await transactionsRepository.getBalance();
 
     if (type.includes('out') && total < value)
-      throw Error('Não foi possivel sacar o dinheiro, valor extrapolado!!!');
+      throw new AppError(
+        'Não foi possivel sacar o dinheiro, valor extrapolado!!!',
+      );
 
-    const transaction = this.transactionsRepository.create({
+    const categoriesRepository = getCustomRepository(CategoriesRepository);
+
+    const category = await categoriesRepository.findCategory({
+      title: categoryTitle,
+    });
+
+    const transaction = transactionsRepository.create({
       title,
       value,
       type,
+      category_id: category.id,
+      category,
     });
+
+    await transactionsRepository.save(transaction);
+
+    delete transaction.category_id;
 
     return transaction;
   }
