@@ -43,8 +43,6 @@ class ImportTransactionsService {
 
     await new Promise(resolve => parseCSV.on('end', resolve));
 
-    console.log(transactions);
-
     if (categories.length === 0 && transactions.length === 0)
       throw new AppError('Arquivo no modelo incorreto.');
 
@@ -52,7 +50,6 @@ class ImportTransactionsService {
       where: {
         title: In(categories),
       },
-      select: ['title'],
     });
 
     const categoriesTitle = existentCategories.map(category => category.title);
@@ -67,7 +64,8 @@ class ImportTransactionsService {
       })),
     );
 
-    await categoriesRepository.save(newCategories);
+    if (newCategories.length > 0)
+      await categoriesRepository.save(newCategories);
 
     const finalCategories = [...newCategories, ...existentCategories];
 
