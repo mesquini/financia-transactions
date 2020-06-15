@@ -1,9 +1,12 @@
 module.exports = function (grunt) {
   grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
     ts: {
       default: {
         tsconfig: './tsconfig.json',
-        src: ['**/*.ts', '!node_modules/**'],
+      },
+      build: {
+        src: ['app.ts', '!node_modules/**'],
       },
     },
   });
