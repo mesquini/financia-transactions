@@ -8,7 +8,7 @@
     "postinstall": "yarn build",
     "build": "tsc",
     "dev": "ts-node-dev --inspect --transpileOnly --ignore-watch node_modules src/server.ts",
-    "start": "dist/app.js",
+    "start": "node dist/app.js",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
     "test": "cross-env NODE_ENV=test jest"
   },
