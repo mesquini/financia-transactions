@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "author": "Victor Mesquini",
   "scripts": {
     "build": "tsc",
     "dev:server": "ts-node-dev --inspect --transpileOnly --ignore-watch node_modules src/server.ts",
     "start": "ts-node src/server.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
-    "test": "cross-env NODE_ENV=test jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "postinstall": "grunt"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -42,6 +44,8 @@
     "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.2",
+    "grunt": "^1.1.0",
+    "grunt-ts": "^6.0.0-beta.22",
     "jest": "^25.3.0",
     "prettier": "^2.0.4",
     "supertest": "^4.0.2",
