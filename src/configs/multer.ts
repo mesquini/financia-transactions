@@ -8,7 +8,7 @@ export default {
   fileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const type: string = file.mimetype;
 
-    if (type.includes('csv')) cb(null, true);
+    if (type.includes('csv') || type.includes('excel')) cb(null, true);
     else cb(new Error('Arquivo invalido, apenas arquivos CSV.'));
   },
 };
